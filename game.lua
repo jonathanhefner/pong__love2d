@@ -5,9 +5,9 @@ COLORS = {
   fg = { 32, 255, 27 }
 }
 
-BALL_SPEED = 64 * SCALE -- per second
-PADDLE_MAX_SPEED = 0.95 * BALL_SPEED -- per second
-PADDLE_ACCELERATION_TIME = 0.5 -- seconds
+BALL_SPEED = 128 * SCALE -- per second
+PADDLE_MAX_SPEED = BALL_SPEED -- per second
+PADDLE_ACCELERATION_TIME = 0.25 -- seconds
 PADDLE_ACCELERATION = PADDLE_MAX_SPEED/PADDLE_ACCELERATION_TIME -- per second^2
 
 
@@ -22,8 +22,8 @@ function game:load()
   })
     
   self.paddles = {
-    Entity(images.paddle, { target=0 }),
-    Entity(images.paddle, { target=0 }),
+    Entity(images.paddle, { dir=0 }),
+    Entity(images.paddle, { dir=0 }),
     update = paddles_update,
     reset = paddles_reset
   }
@@ -142,16 +142,39 @@ end
 -- Paddles
 
 function paddles_update(self, dt)
-  self[1].target = love.mouse.getY()
-  
-  -- make AI a little slow to react to bounces
-  local p2_ymid = (self[2].y + self[2].y2) / 2
-  if self[2].y > 0 or self[2].y2 < H or game.ball.y > p2_ymid or game.ball.y2 < p2_ymid then
-    self[2].target = (game.ball.y + game.ball.y2) / 2
+  if love.keyboard.isDown('up', 'w') then
+    self[1].dir = -1
+  elseif love.keyboard.isDown('down', 's') then
+    self[1].dir = 1
+  else
+    self[1].dir = 0
   end
 
+  
+  -- make AI a little slow to react
+  local p2_ymid = (self[2].y + self[2].y2) / 2
+  if game.ball.y > p2_ymid then
+    self[2].dir = 1
+  elseif game.ball.y2 < p2_ymid then
+    self[2].dir = -1
+  else
+    self[2].dir = 0
+  end
+
+  
   for i, p in ipairs(self) do
-    local y = p.target - p.h/2
+    if p.dir == 0 then
+      p.dy = 0
+    else
+      if p.dir * p.dy < 0 then -- change in direction (different sign)
+        p.dy = 0
+      end
+      
+      p.dy = p.dy + (p.dir * PADDLE_ACCELERATION * dt)
+      p.dy = math.min(math.max(p.dy, -PADDLE_MAX_SPEED), PADDLE_MAX_SPEED)
+    end
+    
+    local y = p.y + p.dy * dt
     p:bound(nil, math.min(math.max(y, 0), H - p.h))
   end
 end
