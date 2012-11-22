@@ -55,10 +55,10 @@ function game:draw()
   self.paddles[2]:draw()
 
   -- score
-  local margin = love.graphics.getHeight()/64
-  local x_mid = love.graphics.getWidth()/2
-  love.graphics.printf(self.scores[1], 0, margin, x_mid - margin, 'right')
-  love.graphics.printf(self.scores[2], x_mid + margin, margin, love.graphics.getWidth(), 'left')
+  local top_margin = H/64
+  local print_width = W/2
+  love.graphics.printf(self.scores[1], 0, top_margin, print_width, 'center')
+  love.graphics.printf(self.scores[2], print_width, top_margin, print_width, 'center')
   
   -- ball
   if self.state ~= 'GAME_OVER' then
