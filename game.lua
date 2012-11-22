@@ -157,11 +157,12 @@ function paddles_update(self, dt)
 
 
   if game.players == 1 then
-    -- make AI a little slow to react
-    local p2_ymid = (self[2].y + self[2].y2) / 2
-    if game.ball.y2 < p2_ymid then
+    -- make AI a little slower to react to bounces on its side of the court
+    if ((game.ball.x < W/2 or self[2].y2 < H) and game.ball.y_mid < self[2].y_mid)
+        or game.ball.y2 < self[2].y_mid then
       self[2].dir = -1
-    elseif game.ball.y > p2_ymid then
+    elseif ((game.ball.x < W/2 or self[2].y > 0) and game.ball.y_mid > self[2].y_mid)
+        or game.ball.y > self[2].y_mid then
       self[2].dir = 1
     else
       self[2].dir = 0

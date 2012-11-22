@@ -12,10 +12,12 @@ function EntityMeta:bound(x, y)
   self.x = x or self.x or 0
   self.w = self.image:getWidth()*SCALE
   self.x2 = self.x + self.w
+  self.x_mid = (self.x + self.x2) / 2
   
   self.y = y or self.y or 0
   self.h = self.image:getHeight()*SCALE
   self.y2 = self.y + self.h
+  self.y_mid = (self.y + self.y2) / 2
 end
 
 
