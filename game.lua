@@ -15,6 +15,7 @@ game = {}
 
 function game:load()
   self.state = 'GAME_OVER'
+  self.players = 1
   self.scores = { 0, 0 }
   self.ball = Entity(images.ball, {
     update = ball_update,
@@ -69,6 +70,10 @@ end
 function game:keypressed(key)
   if key == ' ' then
     self.state = (self.state == 'PLAYING') and 'PAUSED' or 'PLAYING'
+  elseif key == '1' then
+    self.players = 1
+  elseif key == '2' then
+    self.players = 2
   else
     return false
   end
@@ -150,18 +155,28 @@ function paddles_update(self, dt)
     self[1].dir = 0
   end
 
-  
-  -- make AI a little slow to react
-  local p2_ymid = (self[2].y + self[2].y2) / 2
-  if game.ball.y > p2_ymid then
-    self[2].dir = 1
-  elseif game.ball.y2 < p2_ymid then
-    self[2].dir = -1
+
+  if game.players == 1 then
+    -- make AI a little slow to react
+    local p2_ymid = (self[2].y + self[2].y2) / 2
+    if game.ball.y2 < p2_ymid then
+      self[2].dir = -1
+    elseif game.ball.y > p2_ymid then
+      self[2].dir = 1
+    else
+      self[2].dir = 0
+    end
   else
-    self[2].dir = 0
+    if love.keyboard.isDown('i') then
+      self[2].dir = -1
+    elseif love.keyboard.isDown('k') then
+      self[2].dir = 1
+    else
+      self[2].dir = 0
+    end
   end
 
-  
+
   for i, p in ipairs(self) do
     if p.dir == 0 then
       p.dy = 0
@@ -182,7 +197,7 @@ end
 
 function paddles_reset(self)
   local y = H/2 - self[1].h/2
-  
+
   self[1]:bound(self[1].w, y)
   self[2]:bound(W - self[2].w*2, y)
 end
