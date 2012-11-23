@@ -5,9 +5,10 @@ COLORS = {
   fg = { 32, 255, 27 }
 }
 
-BALL_SPEED = 128 * SCALE -- per second
-PADDLE_MAX_SPEED = BALL_SPEED -- per second
-PADDLE_ACCELERATION_TIME = 0.25 -- seconds
+BALL_DX = 128 * SCALE -- per second
+BALL_MAX_DY = 8 * BALL_DX -- per second
+PADDLE_MAX_SPEED = 0.95 * BALL_MAX_DY -- per second
+PADDLE_ACCELERATION_TIME = 1.5 -- seconds
 PADDLE_ACCELERATION = PADDLE_MAX_SPEED/PADDLE_ACCELERATION_TIME -- per second^2
 
 
@@ -99,6 +100,7 @@ function ball_update(self, dt)
       love.audio.play(sounds.hit)
       self.x = -self.x + 2*(game.paddles[1].x2)
       self.dx = -self.dx
+      self.dy = BALL_MAX_DY * (self.y_mid - game.paddles[1].y_mid) / (game.paddles[1].h + self.h*2)
     end
     
   elseif self.x2  >= game.paddles[2].x then
@@ -110,6 +112,7 @@ function ball_update(self, dt)
       love.audio.play(sounds.hit)
       self.x = self.x - 2*(self.x2 - game.paddles[2].x)
       self.dx = -self.dx
+      self.dy = BALL_MAX_DY * (self.y_mid - game.paddles[2].y_mid) / (game.paddles[2].h + self.h*2)
     end
   
   elseif self.y <= 0 then 
@@ -127,15 +130,15 @@ end
 
 
 function ball_reset(self, lastScored)
-  self.y = images.paddle:getHeight()/2 - images.ball:getHeight()/2
-  self.dy = BALL_SPEED
+  self.y = game.paddles[1].h/2 - self.h/2
+  self.dy = BALL_DX -- start with dx == dy
   
   if lastScored == 2 then
-    self.x = love.graphics.getWidth() - images.paddle:getWidth()*3 - images.ball:getWidth()
-    self.dx = -BALL_SPEED
+    self.x = W - game.paddles[1].w*3 - self.w
+    self.dx = -BALL_DX
   else
-    self.x = images.paddle:getWidth()*3
-    self.dx = BALL_SPEED
+    self.x = game.paddles[1].w*3
+    self.dx = BALL_DX
   end
   
   self:bound()
