@@ -7,7 +7,7 @@ COLORS = {
 
 BALL_DX = 128 * SCALE -- per second
 BALL_MAX_DY = 8 * BALL_DX -- per second
-PADDLE_MAX_SPEED = 0.95 * BALL_MAX_DY -- per second
+PADDLE_MAX_SPEED = 0.8 * BALL_MAX_DY -- per second
 PADDLE_ACCELERATION_TIME = 1.5 -- seconds
 PADDLE_ACCELERATION = PADDLE_MAX_SPEED/PADDLE_ACCELERATION_TIME -- per second^2
 
@@ -42,10 +42,8 @@ function game:update(dt)
     local scored = self.ball:update(dt)
     if scored then
       self.scores[scored] = self.scores[scored] + 1
-      self.paddles:reset()
-    else
-      self.paddles:update(dt)
     end
+    self.paddles:update(dt)
   end
 end
 
@@ -160,15 +158,16 @@ function paddles_update(self, dt)
 
 
   if game.players == 1 then
-    -- make AI a little slower to react to bounces on its side of the court
-    if ((game.ball.x < W/2 or self[2].y2 < H) and game.ball.y_mid < self[2].y_mid)
-        or game.ball.y2 < self[2].y_mid then
-      self[2].dir = -1
-    elseif ((game.ball.x < W/2 or self[2].y > 0) and game.ball.y_mid > self[2].y_mid)
-        or game.ball.y > self[2].y_mid then
-      self[2].dir = 1
-    else
-      self[2].dir = 0
+    self[2].dir = 0
+    if game.ball.dx > 0 and game.ball.x > W/4 then
+      if (game.ball.dy >= 0 and game.ball.y > self[2].y_mid)
+          or (game.ball.dy < 0 and game.ball.y_mid > self[2].y2) then
+        self[2].dir = 1
+      
+      elseif (game.ball.dy >= 0 and game.ball.y_mid < self[2].y)
+          or (game.ball.dy < 0 and game.ball.y2 < self[2].y_mid) then
+        self[2].dir = -1
+      end      
     end
   else
     if love.keyboard.isDown('i') then
