@@ -6,21 +6,25 @@ A game of pong for 1 or 2 players, implemented in Lua with
 
 ## Prerequisites
 
-Install LÖVE (tested with v0.8):
+Install LÖVE v0.10:
 
 ```bash
-sudo apt-get install love
+$ wget https://bitbucket.org/rude/love/downloads/liblove0_0.10.2ppa1_amd64.deb
+
+$ wget https://bitbucket.org/rude/love/downloads/love_0.10.2ppa1_amd64.deb
+
+$ sudo apt install ./liblove0_0.10.2ppa1_amd64.deb ./love_0.10.2ppa1_amd64.deb
 ```
 
 
 ## Usage
 
 ```bash
-cd /path/to/project
+$ cd /path/to/project
 
-make
+$ make
 
-love pong.love
+$ love pong.love
 ```
 
 Use <kbd>Space</kbd> to serve or to pause the game.  Use the <kbd>1</kbd>

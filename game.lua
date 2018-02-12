@@ -67,7 +67,7 @@ end
 
 
 function game:keypressed(key)
-  if key == ' ' then
+  if key == 'space' then
     self.state = (self.state == 'PLAYING') and 'PAUSED' or 'PLAYING'
   elseif key == '1' then
     self.players = 1
