@@ -5,7 +5,7 @@ ZIP = zip
 all: pong.love
 
 pong.love:
-	@ $(ZIP) -9 -q -r pong.love . -i 'fonts/*' -i 'images/*' -i 'sounds/*' -i '*.lua'
+	@ cd game && $(ZIP) -9 -q -r ../pong.love . && cd ..
 
 clean:
 	@ rm -f pong.love
