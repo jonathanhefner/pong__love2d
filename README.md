@@ -3,6 +3,8 @@
 A game of pong for 1 or 2 players, implemented in Lua with
 [LÖVE](https://love2d.org/).
 
+<img src="screenshots/gameplay.png" alt="gameplay" width="640">
+
 
 ## Prerequisites
 
