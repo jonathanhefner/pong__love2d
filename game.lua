@@ -22,14 +22,14 @@ function game:load()
     update = ball_update,
     reset = ball_reset
   })
-    
+
   self.paddles = {
     Entity(images.paddle, { dir=0 }),
     Entity(images.paddle, { dir=0 }),
     update = paddles_update,
     reset = paddles_reset
   }
-  
+
   love.graphics.setColor(unpack(COLORS.fg))
   self.ball:reset(1)
   self.paddles:reset()
@@ -58,7 +58,7 @@ function game:draw()
   local print_width = W/2
   love.graphics.printf(self.scores[1], 0, top_margin, print_width, 'center')
   love.graphics.printf(self.scores[2], print_width, top_margin, print_width, 'center')
-  
+
   -- ball
   if self.state ~= 'GAME_OVER' then
     self.ball:draw()
@@ -87,7 +87,7 @@ end
 
 function ball_update(self, dt)
   self:bound(self.x + self.dx*dt, self.y + self.dy*dt)
-  
+
   -- this is why bounding box/collision detection should be wrapped up in a neat library :)
   if self.x <= game.paddles[1].x2 then
     if self.y > game.paddles[1].y2 or self.y2 < game.paddles[1].y then
@@ -100,7 +100,7 @@ function ball_update(self, dt)
       self.dx = -self.dx
       self.dy = BALL_MAX_DY * (self.y_mid - game.paddles[1].y_mid) / (game.paddles[1].h + self.h*2)
     end
-    
+
   elseif self.x2  >= game.paddles[2].x then
     if self.y > game.paddles[2].y2 or self.y2 < game.paddles[2].y then
       love.audio.play(sounds.score)
@@ -112,17 +112,17 @@ function ball_update(self, dt)
       self.dx = -self.dx
       self.dy = BALL_MAX_DY * (self.y_mid - game.paddles[2].y_mid) / (game.paddles[2].h + self.h*2)
     end
-  
-  elseif self.y <= 0 then 
+
+  elseif self.y <= 0 then
     love.audio.play(sounds.bounce)
     self.y = -self.y
     self.dy = -self.dy
-    
+
   elseif self.y2 >= H then
     love.audio.play(sounds.bounce)
     self.y = -self.y + 2*(H - self.h)
-    self.dy = -self.dy  
-  
+    self.dy = -self.dy
+
   end
 end
 
@@ -130,7 +130,7 @@ end
 function ball_reset(self, lastScored)
   self.y = game.paddles[1].h/2 - self.h/2
   self.dy = BALL_DX -- start with dx == dy
-  
+
   if lastScored == 2 then
     self.x = W - game.paddles[1].w*3 - self.w
     self.dx = -BALL_DX
@@ -138,7 +138,7 @@ function ball_reset(self, lastScored)
     self.x = game.paddles[1].w*3
     self.dx = BALL_DX
   end
-  
+
   self:bound()
 end
 
@@ -163,11 +163,11 @@ function paddles_update(self, dt)
       if (game.ball.dy >= 0 and game.ball.y > self[2].y_mid)
           or (game.ball.dy < 0 and game.ball.y_mid > self[2].y2) then
         self[2].dir = 1
-      
+
       elseif (game.ball.dy >= 0 and game.ball.y_mid < self[2].y)
           or (game.ball.dy < 0 and game.ball.y2 < self[2].y_mid) then
         self[2].dir = -1
-      end      
+      end
     end
   else
     if love.keyboard.isDown('i') then
@@ -187,11 +187,11 @@ function paddles_update(self, dt)
       if p.dir * p.dy < 0 then -- change in direction (different sign)
         p.dy = 0
       end
-      
+
       p.dy = p.dy + (p.dir * PADDLE_ACCELERATION * dt)
       p.dy = math.min(math.max(p.dy, -PADDLE_MAX_SPEED), PADDLE_MAX_SPEED)
     end
-    
+
     local y = p.y + p.dy * dt
     p:bound(nil, math.min(math.max(y, 0), H - p.h))
   end
@@ -204,5 +204,3 @@ function paddles_reset(self)
   self[1]:bound(self[1].w, y)
   self[2]:bound(W - self[2].w*2, y)
 end
-
-

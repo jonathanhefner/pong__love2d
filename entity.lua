@@ -13,7 +13,7 @@ function EntityMeta:bound(x, y)
   self.w = self.image:getWidth()*SCALE
   self.x2 = self.x + self.w
   self.x_mid = (self.x + self.x2) / 2
-  
+
   self.y = y or self.y or 0
   self.h = self.image:getHeight()*SCALE
   self.y2 = self.y + self.h
@@ -24,11 +24,11 @@ end
 function Entity(image, t)
   t = t or {}
   setmetatable(t, EntityMeta)
-  
+
   t.image = image
   t:bound()
   t.dx = t.dx or 0
   t.dy = t.dy or 0
-  
+
   return t
 end
