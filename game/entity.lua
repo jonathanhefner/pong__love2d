@@ -1,34 +1,42 @@
--- ahh, the classic Entity ...thing... where would any game be without one? :)
+require('util')
 
-EntityMeta = { __index = (function(t, key) return rawget(t, key) or EntityMeta[key] end) }
+Entity = Class:new{
+  image = nil,
+  w = 0, h = 0,
+  x = 0, y = 0,
+  dx = 0, dy = 0,
+}
 
-
-function EntityMeta:draw()
-  love.graphics.draw(self.image, self.x, self.y, 0, SCALE, SCALE)
+function Entity:initialize()
+  if self.image then
+    self.w = self.image:getWidth() * SCALE
+    self.h = self.image:getHeight() * SCALE
+  end
 end
 
-
-function EntityMeta:bound(x, y)
-  self.x = x or self.x or 0
-  self.w = self.image:getWidth()*SCALE
-  self.x2 = self.x + self.w
-  self.x_mid = (self.x + self.x2) / 2
-
-  self.y = y or self.y or 0
-  self.h = self.image:getHeight()*SCALE
-  self.y2 = self.y + self.h
-  self.y_mid = (self.y + self.y2) / 2
+function Entity:update(dt)
+  self.x = self.x + self.dx * dt
+  self.y = self.y + self.dy * dt
 end
 
+function Entity:draw()
+  if self.image then
+    love.graphics.draw(self.image, self.x, self.y, 0, SCALE, SCALE)
+  end
+end
 
-function Entity(image, t)
-  t = t or {}
-  setmetatable(t, EntityMeta)
+function Entity:getX(part)
+  return self.x + self.w * PART_W_OFFSET[part or 'TOPLEFT']
+end
 
-  t.image = image
-  t:bound()
-  t.dx = t.dx or 0
-  t.dy = t.dy or 0
+function Entity:getY(part)
+  return self.y + self.h * PART_H_OFFSET[part or 'TOPLEFT']
+end
 
-  return t
+function Entity:setX(x, part)
+  self.x = x - self.w * PART_W_OFFSET[part or 'TOPLEFT']
+end
+
+function Entity:setY(y, part)
+  self.y = y - self.h * PART_H_OFFSET[part or 'TOPLEFT']
 end
